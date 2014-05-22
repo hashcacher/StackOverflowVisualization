@@ -13,7 +13,8 @@ class Sidebar
 
   RadioButton rb;
   Toggle toggle;
-  Textlabel normal; 
+  Textlabel normal;
+  Button clear; 
 
   Sidebar(int x, int y)
   {
@@ -41,10 +42,11 @@ class Sidebar
     it.setColor(new CColor(#ff0099, #ff0099, #ff0099, 255, #ff0099));
     it.setIsActive(true);
     activeTags.add("html");
+    activeRows.add(reader.table.getRow(11));
     lookup.set(Integer.toString(0)+".0", "html");
 
     checkbox = cp5.addCheckBox("checkBox")
-      .setPosition(baseX+20, baseY + 20)
+      .setPosition(baseX+20, baseY + 40)
         .setColorForeground(color(120))
           .setColorActive(#F09102)
             .setColorLabel(color(0))
@@ -59,6 +61,14 @@ class Sidebar
                               .addItem("Downvotes", 200)
                                 .addItem("Favorites", 255)
                                   ;
+
+    clear = cp5.addButton("clear")
+      .setValue(0)
+        .setPosition(baseX+10, 293)
+          .setSize(188, 15)
+            .setColorBackground(color(255))
+              .setColorCaptionLabel(color(0));
+    ;
 
     rb = cp5.addRadioButton("radio")
       .setPosition(baseX+20, baseY+200)

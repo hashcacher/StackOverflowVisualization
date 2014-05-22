@@ -39,8 +39,7 @@ class Language
       String[] criteria = day.substring(1, day.length()-1).split(" ");
       for (int k = 0; k < 6; k++)
         data[j-3][k] = Integer.parseInt(criteria[k]); 
-      //        day = day.substring(1, day.length()-1);
-      //        String[] parts = day.split(" ");
+      
     }
 
     x = 2;
@@ -51,7 +50,7 @@ class Language
     col2 = c2;
   }
 
-  void showFit(int originX, int originY)
+  void showFit2(int originX, int originY)
   {
 
     fill(col1);
@@ -97,6 +96,58 @@ class Language
       if (screenCoords[1]+100 < 110)
         continue;
       line(screenCoords[0]+o1, screenCoords[1]+100, nextScreenCoords[0]+o1, nextScreenCoords[1]+100);
+    }
+  }
+
+
+  void showFit(int originX, int originY)
+  {
+
+    fill(col1);
+    stroke(col2);
+    strokeWeight(strokeWt);
+
+    int[] pt1, pt2;
+    int avgEvery = 15;
+
+    for (int i = curMin; i < curMax-avgEvery; i += avgEvery)
+    {
+      if(i < padding/2)
+        continue;
+      int sum = 0;
+      int sum2 = 0;
+      for (int ii = i; ii < i + avgEvery; ii++)
+        for (int j = 0; j < 6; j++)
+          if (sidebar.checkbox.getState(j))
+            sum += data[ii][j];
+      for (int ii = i+avgEvery; ii < i + 2*avgEvery; ii++)
+        for (int j = 0; j < 6; j++)
+          if (sidebar.checkbox.getState(j))
+            sum2 += data[ii][j];
+      sum /= avgEvery;
+      sum2 /= avgEvery;
+      // average 5 or so and 
+      if (normalNumber == 2)
+      {
+        sum = int(sum/reader.uniquenorm[i+avgEvery] * 500 / (100/reader.uniquenorm[730]));
+        sum2 = int(sum2/reader.uniquenorm[i+avgEvery] * 500 / (100/reader.uniquenorm[730]));
+      }  
+      else if (normalNumber == 3)
+      {
+        sum = int(sum/reader.newusersnorm[i+avgEvery] * 500 / (100/reader.newusersnorm[730]));
+        sum2 = int(sum2/reader.newusersnorm[i+avgEvery] * 500 / (100/reader.newusersnorm[730]));
+      }
+      else if (normalNumber == 4)
+      {
+        sum = int(sum/reader.viewsnorm[i+avgEvery] * 500 / (100/reader.viewsnorm[730]));
+        sum2 = int(sum2/reader.viewsnorm[i+avgEvery] * 500 / (100/reader.viewsnorm[730]));
+      }
+      int[] screenCoords = scaleCoords(i, sum);
+      int[] nextScreenCoords = scaleCoords(i + avgEvery, sum2);
+
+      if (screenCoords[1]+100 < 110)
+        continue;
+      line(screenCoords[0]+o1+10, screenCoords[1]+100, nextScreenCoords[0]+10+o1, nextScreenCoords[1]+100);
     }
   }
 

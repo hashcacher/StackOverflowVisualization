@@ -21,6 +21,7 @@ CColor defaultItem;
 Sidebar sidebar;
 
 Set<String> activeTags;
+Set<TableRow> activeRows;
 Reader reader;
 
 String[] xMonthTicks = new String[1462];
@@ -41,12 +42,14 @@ void setup()
   reader = new Reader("data/dataset.csv");
 
   activeTags = new HashSet<String>();
+  activeRows = new HashSet<TableRow>();
 
   v = new Visualization();
   cp5 = new ControlP5(this);
   sidebar = new Sidebar(w, 300);
   sidebar.checkbox.activateAll();
   sidebar.rb.activate(0);
+  
 
   activeItem = new CColor(#F09102, #F09102, #F09102, 255, #F09102);
   defaultItem = sidebar.suggestions.getColor();
@@ -76,10 +79,11 @@ void draw()
   background(255);
 
   text("Tag Search", 575, 9);
-  text("Filter", 575, 315);
+
+  text("Filter", 575, 335);
 
   noFill();
-  rect(510, 300, 170, 130);
+  rect(510, 320, 170, 130);
 
   drawNormalization();
 
@@ -104,7 +108,7 @@ void drawNormalization()
   text("1", 10, 15);
   text("Aug 08", 25, 97);
   text("Aug 12", 475, 97);
-  
+
   text(bestFit?"Best Fit" : "Points", 407, 120);
 
 
@@ -125,6 +129,8 @@ void drawNormalization()
     d = reader.viewsnorm;
     text("Normalization: Site Views", 180, 10);
   }
+
+  //draws the actual normalization points
   for (int i = 0; i < d.length; i++)
   {
     int x = 25+i*475/1462;
@@ -192,6 +198,7 @@ void controlEvent(ControlEvent theEvent) {
     {
       //      TableRow r = reader.table.findRow(item.getText(), 0);
       activeTags.add(s);
+      activeRows.add(r);
       color c = color(random(255), random(255), random(255));
       CColor col = new CColor(c, c, c, 255, c);
 
@@ -201,6 +208,7 @@ void controlEvent(ControlEvent theEvent) {
     }
     else
     {
+      activeRows.remove(r);
       activeTags.remove(s);
       item.setColor(defaultItem);
       v.removeLanguage(r);
@@ -214,12 +222,19 @@ void controlEvent(ControlEvent theEvent) {
 
   else if (theEvent.isFrom(sidebar.toggle)) 
     bestFit = ! bestFit;
-}
 
-void keyPressed()
-{
-  //  textfield.submit();
-  //  println(sidebar.suggestions.getItem(0).isActive());
+  else if (theEvent.isFrom(sidebar.clear))
+  {
+    for (TableRow r : activeRows)
+    {
+      String s = r.getString(0);
+      activeTags.remove(s);
+      suggestions.getItem(s).setIsActive(false);
+      suggestions.getItem(s).setColor(defaultItem);
+      v.removeLanguage(r);
+    }
+    activeRows = new HashSet<TableRow>();
+  }
 }
 
 void mouseMoved()
