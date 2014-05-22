@@ -8,6 +8,8 @@ import java.util.HashSet;
 final int w = 500, h = 500;
 final int o1 = 4;
 
+int ct = 1;
+
 int normalNumber = 0;
 
 int padding;
@@ -23,6 +25,7 @@ Reader reader;
 
 String[] xMonthTicks = new String[1462];
 
+boolean bestFit = true;
 
 int moveAmt;
 
@@ -47,13 +50,36 @@ void setup()
 
   activeItem = new CColor(#F09102, #F09102, #F09102, 255, #F09102);
   defaultItem = sidebar.suggestions.getColor();
+
+  initializeTextfield();
 }
 
+void initializeTextfield()
+{
+  ListBox suggestions = sidebar.suggestions;
+  for (String s : reader.tags)
+  {
+    ListBoxItem item = suggestions.getItem(s);//faster if we getItem by Index
+    if (item == null)
+    {
+      ListBoxItem item2 = suggestions.addItem(s, ct++);
+
+      //          println(item2.getValue());
+      sidebar.lookup.set(Integer.toString(item2.getValue())+".0", s);
+      //          println(Integer.toString(item2.getValue())+".0");
+    }
+  }
+}
 
 void draw()
 {
   background(255);
-  text("Normalization", 200, 10);
+
+  text("Tag Search", 575, 9);
+  text("Filter", 575, 315);
+
+  noFill();
+  rect(510, 300, 170, 130);
 
   drawNormalization();
 
@@ -76,17 +102,29 @@ void drawNormalization()
   rect(25, 5, 2, 80);
   text("0", 10, 85);
   text("1", 10, 15);
-  text("Aug 08", 25, 98);
-  text("Aug 12", 475, 98);
+  text("Aug 08", 25, 97);
+  text("Aug 12", 475, 97);
+  
+  text(bestFit?"Best Fit" : "Points", 407, 120);
+
 
   float[] d = new float[1462];
   //  float xScale = 1462/475;
   if (normalNumber == 2)
+  {
     d = reader.uniquenorm;
+    text("Normalization: Unique Active Users", 150, 10);
+  }
   else if (normalNumber == 3)
+  {
     d = reader.newusersnorm;
+    text("Normalization: New User Registrations", 140, 10);
+  }
   else if (normalNumber == 4)
+  {
     d = reader.viewsnorm;
+    text("Normalization: Site Views", 180, 10);
+  }
   for (int i = 0; i < d.length; i++)
   {
     int x = 25+i*475/1462;
@@ -97,7 +135,7 @@ void drawNormalization()
 }
 
 
-int ct = 1;
+
 void controlEvent(ControlEvent theEvent) {
   println(theEvent);
   //name: Suggestions
@@ -121,7 +159,7 @@ void controlEvent(ControlEvent theEvent) {
 
           //          println(item2.getValue());
           sidebar.lookup.set(Integer.toString(item2.getValue())+".0", s);
-          println(Integer.toString(item2.getValue())+".0");
+          //          println(Integer.toString(item2.getValue())+".0");
         }
       }
       else
@@ -171,15 +209,11 @@ void controlEvent(ControlEvent theEvent) {
     //    println(item.isActive());
   }
 
-  else if (theEvent.isFrom(sidebar.rb)) {
+  else if (theEvent.isFrom(sidebar.rb))
     normalNumber = round(theEvent.getValue());
-  }
-  //
-  //  println(suggestions.getListBoxItems().length);
-  //  for (int i = 0; i < suggestions.getListBoxItems().length; i++)
-  //  {
-  //    suggestions.getItem(i).setValue(i);
-  //  }
+
+  else if (theEvent.isFrom(sidebar.toggle)) 
+    bestFit = ! bestFit;
 }
 
 void keyPressed()
@@ -226,30 +260,11 @@ public class Visualization
     curMax = w-2*padding;
 
     languages = new ArrayList<Language>();
-    //    int ct = 0;
-    //    for (TableRow row : reader.table.rows())
-    //    {
-    //      languages.add(new Language(row, #FF0099, color(random(255), random(255), random(255))));
-    //      ct++;
-    //      if(ct > 0)
-    //        break;
-    //    }
     addLanguage(reader.table.getRow(11), color(#FF0099));
-    //    languages.add(new Language(reader.table.getRow(0), #FF0099, color(random(255), random(255), random(255))));
-    //    languages.add(new Language(reader.table.getRow(8), #FF0099, #FF0099));
-    //    languages.add(new Language(reader.table.getRow(4), #FF0099, #0099FF));
-    //    languages.add(new Language(reader.table.getRow(24), #FF0099, color(random(255), random(255), random(255))));
+
     axes = new Axes(originX, originY, padding, w, h, axisWidth, color(0), color(6, 61, 9));
 
-    //    tickBuffer = new ArrayList<int>();
-    //    xMonthTicks = new String[1462];
     makeMonthTicks();
-
-    //    println(xMonthTicks[xMonthTicks.length-3]);
-    //    println(xMonthTicks[0]);
-    //    curTick = 0;
-    //    tickBuffer.add(xMonthTicks[curTick]);
-    //    curTick++;
   }
 
   void addLanguage(TableRow r, color c)
@@ -280,7 +295,10 @@ public class Visualization
 
     for (Language l : languages)
     {
-      l.show(originX, y(originY));
+      if (bestFit)
+        l.showFit(originX, y(originY));
+      else 
+        l.showPoints(originX, y(originY));
     }
     axes.show();
   }

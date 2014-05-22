@@ -2,6 +2,7 @@ class Sidebar
 {
 
   final int baseX, baseY;
+
   CheckBox checkbox;
   Textfield textfield;
   ListBox suggestions;
@@ -11,7 +12,7 @@ class Sidebar
   int timesRun = 0; 
 
   RadioButton rb;
-
+  Toggle toggle;
   Textlabel normal; 
 
   Sidebar(int x, int y)
@@ -64,35 +65,19 @@ class Sidebar
         .setColorForeground(color(120))
           .setColorActive(#ff0099)
             .setColorLabel(color(0))
-              .addItem("None", 1)
-                .addItem("Unique active users", 2)
-                  .addItem("New user registrations", 3)
-                    .addItem("Site views", 4);
+              .setSize(20, 20)
+                .addItem("None", 1)
+                  .addItem("Unique active users", 2)
+                    .addItem("New user registrations", 3)
+                      .addItem("Site views", 4);
 
+    toggle = cp5.addToggle("toggle")
+      .setPosition(450, 105)
+        .setSize(50, 20)
+          .setValue(true)
+            .setMode(ControlP5.SWITCH)
+              ;
   }
-
-
-
-  //
-  //  void keyPressed() {
-  //    if (key==' ') {
-  //      checkbox.deactivateAll();
-  //    } 
-  //    else {
-  //      for (int i=0;i<6;i++) {
-  //        // check if key 0-5 have been pressed and toggle
-  //        // the checkbox item accordingly.
-  //        if (keyCode==(48 + i)) { 
-  //          // the index of checkbox items start at 0
-  //          checkbox.toggle(i);
-  //          println("toggle "+checkbox.getItem(i).name());
-  //          // also see 
-  //          // checkbox.activate(index);
-  //          // checkbox.deactivate(index);
-  //        }
-  //      }
-  //    }
-  //  }
 
   void show()
   {

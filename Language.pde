@@ -51,7 +51,7 @@ class Language
     col2 = c2;
   }
 
-  void show(int originX, int originY)
+  void showFit(int originX, int originY)
   {
 
     fill(col1);
@@ -100,7 +100,7 @@ class Language
     }
   }
 
-  void show2(int originX, int originY)
+  void showPoints(int originX, int originY)
   {
     fill(col1);
     stroke(col2);
@@ -136,10 +136,10 @@ class Language
       point(screenCoords[0]+o1, screenCoords[1]+100);
     }
   }
-
-  void move2()
-  {
-  }
+//
+//  void move2()
+//  {
+//  }
 
 
   //      
