@@ -10,6 +10,8 @@ class Language
   //  Ranges ranges;
   float max;
   TableRow row;
+  int[][] data = new int[1462][6];
+
 
   color col1, col2;
   final int strokeWt = 3;
@@ -23,6 +25,24 @@ class Language
     name = r.getString(0);
     max = 1462;
 
+    //load in data
+    for (int j = 3; j < 1462+3; j++)
+    {
+
+      String day = row.getString(j);
+      if (day.equals("0"))
+      {
+        for (int k = 0; k < 6; k++)
+          data[j-3][k] = 0;
+        continue;
+      }
+      String[] criteria = day.substring(1, day.length()-1).split(" ");
+      for (int k = 0; k < 6; k++)
+        data[j-3][k] = Integer.parseInt(criteria[k]); 
+      //        day = day.substring(1, day.length()-1);
+      //        String[] parts = day.split(" ");
+    }
+
     x = 2;
     y = round(r.getFloat(x) * yScale);
     //    println(y);
@@ -31,37 +51,31 @@ class Language
     col2 = c2;
   }
 
-  void show2(int originX, int originY)
+//  void show
+
+    void show2(int originX, int originY)
   {
     fill(col1);
     stroke(col2);
     strokeWeight(strokeWt);
 
+    int[] pt1, pt2;
     for (int i = curMin; i < curMax; i++)
     {
-        String day = row.getString(3+i);
-      if (day.equals("0"))
-        continue;
-      day = day.substring(1, day.length()-1);
-      String[] parts = day.split(" ");
-
       int sum = 0;
-      for (int j = 0; j < 6; j++)
+      for(int j = 0; j < 6; j++)
       {
-        //        println(sidebar.checkbox.getItem(j).getState());
-        if (sidebar.checkbox.getItem(j).getState())
-        {
-          //          println(parts.length);
-          sum += parseInt(parts[j]);
-        }
+        if(sidebar.checkbox.getState(j))
+          sum += data[i][j]; 
       }
+      // average 5 or so and 
       if (normalNumber == 2)
         sum = int(sum/reader.uniquenorm[i] * 500 / (100/reader.uniquenorm[730]));
       else if (normalNumber == 3)
         sum = int(sum/reader.newusersnorm[i] * 500 / (100/reader.newusersnorm[730]));
       else if (normalNumber == 4)
         sum = int(sum/reader.viewsnorm[i] * 500 / (100/reader.viewsnorm[730]));
-//      sum*500/(
+      //      sum*500/(
       //      println(sum);
       //      println(day);
       //      int[] curData2 = {
