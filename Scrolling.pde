@@ -80,7 +80,7 @@ void drawNormalization()
   text("Aug 12", 475, 98);
 
   float[] d = new float[1462];
-//  float xScale = 1462/475;
+  //  float xScale = 1462/475;
   if (normalNumber == 2)
     d = reader.uniquenorm;
   else if (normalNumber == 3)
@@ -280,8 +280,7 @@ public class Visualization
 
     for (Language l : languages)
     {
-      l.show2(originX, y(originY));
-      //      l.move();
+      l.show(originX, y(originY));
     }
     axes.show();
   }
